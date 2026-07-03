@@ -1,18 +1,44 @@
-import { Button } from "@workspace/ui/components/button"
+import { useState } from "react"
+import { Header } from "./components/header"
+import { CreateCard } from "./components/create-card"
+import { ListCard } from "./components/list-card"
+import { DeleteConfirmationModal } from "./components/delete-confirmation-modal"
+import { EditModal } from "./components/edit-modal"
+import type { Link } from "./types/links"
 
 export function App() {
+  const baseUrl = `${window.location.origin}/s`
+
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null)
+  const [editTarget, setEditTarget] = useState<Link | null>(null)
+
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
-        <div className="text-muted-foreground font-mono text-xs">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
+    <div className="flex min-h-screen justify-center bg-background px-4 py-12 text-foreground transition-colors duration-200">
+      <div className="flex w-full max-w-xl flex-col gap-6">
+        <Header />
+
+        <CreateCard baseUrl={baseUrl} />
+
+        <ListCard
+          baseUrl={baseUrl}
+          onEdit={setEditTarget}
+          onDelete={setDeleteTargetId}
+        />
+
+        {deleteTargetId && (
+          <DeleteConfirmationModal
+            id={deleteTargetId}
+            onClose={() => setDeleteTargetId(null)}
+          />
+        )}
+
+        {editTarget && (
+          <EditModal
+            link={editTarget}
+            baseUrl={baseUrl}
+            onClose={() => setEditTarget(null)}
+          />
+        )}
       </div>
     </div>
   )
